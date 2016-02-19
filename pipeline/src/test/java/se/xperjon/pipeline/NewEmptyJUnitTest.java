@@ -30,7 +30,7 @@ public class NewEmptyJUnitTest {
             System.out.println("starting 2");
             return PipelineStatus.ERROR();
         };
-        Main main = new Main(Arrays.asList(pipeline1, pipeline2));
+        PipelineExecutor main = new PipelineExecutor(Arrays.asList(pipeline1, pipeline2));
 //        main.start();
     }
 
@@ -40,7 +40,7 @@ public class NewEmptyJUnitTest {
             System.out.println("starting 1");
             throw new IllegalArgumentException("error");
         };
-        Main main = new Main(Arrays.asList(pipeline1));
+        PipelineExecutor main = new PipelineExecutor(Arrays.asList(pipeline1));
 //        main.start();
     }
 
@@ -50,16 +50,26 @@ public class NewEmptyJUnitTest {
             try {
                 System.out.println("Starting long running pipeline");
                 Thread.sleep(10000);
+//                throw new RuntimeException("Error");
             } catch (InterruptedException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PipelineExecutor.class.getName()).log(Level.SEVERE, null, ex);
             }
             return PipelineStatus.OK();
         };
         Pipeline p2 = () -> {
             System.out.println("starting 2");
+            Thread.sleep(1000);
             return PipelineStatus.OK();
         };
-        Main main = new Main(Arrays.asList(p2,p1));
+        PipelineExecutor main = new PipelineExecutor(Arrays.asList(p2,p1));
         main.start();
+        
+        try {
+            Thread.sleep(25000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(NewEmptyJUnitTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("Exiting");
+        main.stop();
     }
 }
